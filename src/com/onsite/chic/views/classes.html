@@ -1,9 +1,29 @@
 <html>
   <head>
     <title>Chic - Classes</title>
+
+    <style type="text/css">
+      table.bordered, table.bordered th, table.bordered td '{' border: 1px solid #000000; '}'
+    </style>
   </head>
 
   <body>
     <h1><a href="/">Chic</a> - Classes</h1>
+
+    <p>
+      Total number of classes loaded: {0}
+    </p>
+
+    <table class="bordered">
+      <thead>
+        <tr>
+          <th>Class Name</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {1}
+      </tbody>
+    </table>
   </body>
 </html>

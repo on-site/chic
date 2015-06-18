@@ -126,7 +126,16 @@ public class Request {
     }
 
     private void classes() throws IOException {
-        printTemplate("classes.html");
+        Class[] classes = chic.getSortedClasses();
+        StringBuilder rows = new StringBuilder();
+
+        for (Class clazz : classes) {
+            rows.append("<tr><td>");
+            rows.append(clazz.getName());
+            rows.append("</td></tr>\n");
+        }
+
+        printTemplate("classes.html", classes.length, rows.toString());
     }
 
     private void packages() throws IOException {
