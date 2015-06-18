@@ -10,7 +10,10 @@
   </target>
 
   <target name="compile" depends="init">
-    <javac srcdir="${src}" destdir="${build}" debug="on" />
+    <javac srcdir="${src}" destdir="${build}" debug="on">
+      <compilerarg value="-Xlint:deprecation" />
+      <compilerarg value="-Xlint:unchecked" />
+    </javac>
 
     <copy todir="${build}">
       <fileset dir="${src}">

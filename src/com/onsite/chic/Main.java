@@ -34,8 +34,8 @@ public class Main {
     }
 
     private static void attach(String pid, String agentOptions) throws MalformedURLException, ReflectiveOperationException, URISyntaxException {
-        URLClassLoader classLoader = new URLClassLoader(new URL[] { getToolsJarFile().toURL() }, Main.class.getClassLoader());
-        Class VirtualMachine = Class.forName("com.sun.tools.attach.VirtualMachine", true, classLoader);
+        URLClassLoader classLoader = new URLClassLoader(new URL[] { getToolsJarFile().toURI().toURL() }, Main.class.getClassLoader());
+        Class<?> VirtualMachine = Class.forName("com.sun.tools.attach.VirtualMachine", true, classLoader);
         Method attach = VirtualMachine.getMethod("attach", String.class);
         Method loadAgent = VirtualMachine.getMethod("loadAgent", String.class, String.class);
         Method detach = VirtualMachine.getDeclaredMethod("detach");
@@ -67,6 +67,6 @@ public class Main {
     }
 
     private static void main(String args, Instrumentation instrumentation) throws IOException {
-        new Server(new Chic(instrumentation)).start();
+        new Chic(instrumentation, args).start();
     }
 }
