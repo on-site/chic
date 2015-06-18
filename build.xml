@@ -1,0 +1,30 @@
+<project name="Chic" default="dist" basedir=".">
+  <property name="src" location="src" />
+  <property name="build" location="build" />
+  <property name="dist" location="dist" />
+  <property name="version" value="0.1.0" />
+
+  <target name="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${dist}" />
+  </target>
+
+  <target name="compile" depends="init">
+    <javac srcdir="${src}" destdir="${build}"/>
+  </target>
+
+  <target name="dist" depends="compile">
+    <jar jarfile="${dist}/chic-${version}.jar" basedir="${build}">
+      <manifest>
+        <attribute name="Agent-Class" value="com.onsite.chic.Main" />
+        <attribute name="Premain-Class" value="com.onsite.chic.Main" />
+        <attribute name="Main-Class" value="com.onsite.chic.Main" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build}" />
+    <delete dir="${dist}" />
+  </target>
+</project>
