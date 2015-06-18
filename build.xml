@@ -11,6 +11,12 @@
 
   <target name="compile" depends="init">
     <javac srcdir="${src}" destdir="${build}" debug="on" />
+
+    <copy todir="${build}">
+      <fileset dir="${src}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
   </target>
 
   <target name="dist" depends="compile">

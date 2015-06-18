@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.MessageFormat;
 import java.util.regex.Pattern;
 
 /**
@@ -55,6 +56,12 @@ public class Request {
                 case "/":
                     index();
                     break;
+                case "/classes":
+                    classes();
+                    break;
+                case "/packages":
+                    packages();
+                    break;
                 default:
                     invalidPath(path);
                 }
@@ -97,12 +104,32 @@ public class Request {
         printError(404, "Invalid path: " + path);
     }
 
-    private void index() {
+    private void printTemplate(String file, Object... args) throws IOException {
+        StringBuilder view = new StringBuilder();
+
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("views/" + file), "UTF-8"))) {
+            String line = input.readLine();
+
+            while (line != null) {
+                view.append(line);
+                view.append("\n");
+                line = input.readLine();
+            }
+        }
+
         printHeader();
-        println("<html>");
-        println("  <body>");
-        println("    Welcome to Chic!  More to come.");
-        println("  </body>");
-        println("</html>");
+        print(MessageFormat.format(view.toString(), args));
+    }
+
+    private void index() throws IOException {
+        printTemplate("index.html");
+    }
+
+    private void classes() throws IOException {
+        printTemplate("classes.html");
+    }
+
+    private void packages() throws IOException {
+        printTemplate("packages.html");
     }
 }
