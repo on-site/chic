@@ -56,16 +56,21 @@ public class Request {
                 switch (path) {
                 case "/":
                     index();
-                    break;
+                    return;
                 case "/classes":
                     classes();
-                    break;
+                    return;
                 case "/packages":
                     packages();
-                    break;
-                default:
-                    invalidPath(path);
+                    return;
                 }
+
+                if (path.startsWith("/package/")) {
+                    singlePackage(path.substring("/package/".length()));
+                    return;
+                }
+
+                invalidPath(path);
             }
         } finally {
             socket.close();
@@ -144,7 +149,9 @@ public class Request {
         StringBuilder rows = new StringBuilder();
 
         for (String key : packageCounts.keySet()) {
-            rows.append("<tr><td>");
+            rows.append("<tr><td><a href=\"/package/");
+            rows.append(key);
+            rows.append("\">");
             rows.append(key);
             rows.append("</td><td>");
             rows.append(packageCounts.get(key));
@@ -152,5 +159,18 @@ public class Request {
         }
 
         printTemplate("packages.html", packageCounts.size(), rows.toString());
+    }
+
+    private void singlePackage(String packageName) throws IOException {
+        Class[] classes = chic.getSortedClasses(packageName);
+        StringBuilder rows = new StringBuilder();
+
+        for (Class clazz : classes) {
+            rows.append("<tr><td>");
+            rows.append(clazz.getName());
+            rows.append("</td></tr>\n");
+        }
+
+        printTemplate("package.html", packageName, classes.length, rows.toString());
     }
 }

@@ -1,8 +1,11 @@
 package com.onsite.chic;
 
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -36,13 +39,7 @@ public class Chic {
         SortedMap<String, Integer> results = new TreeMap<>();
 
         for (Class clazz : getClasses()) {
-            String className = clazz.getName();
-            String packageName = NO_PACKAGE;
-            int lastDotIndex = className.lastIndexOf('.');
-
-            if (lastDotIndex > 0) {
-                packageName = className.substring(0, lastDotIndex);
-            }
+            String packageName = getPackageName(clazz);
 
             if (results.containsKey(packageName)) {
                 results.put(packageName, results.get(packageName) + 1);
@@ -58,5 +55,29 @@ public class Chic {
         Class[] classes = getClasses();
         Arrays.sort(classes, CLASS_NAME_COMPARATOR);
         return classes;
+    }
+
+    public Class[] getSortedClasses(String packageName) {
+        List<Class> classes = new ArrayList<>();
+
+        for (Class clazz : getClasses()) {
+            if (getPackageName(clazz).equals(packageName)) {
+                classes.add(clazz);
+            }
+        }
+
+        Collections.sort(classes, CLASS_NAME_COMPARATOR);
+        return classes.toArray(new Class[0]);
+    }
+
+    private static String getPackageName(Class clazz) {
+        String className = clazz.getName();
+        int lastDotIndex = className.lastIndexOf('.');
+
+        if (lastDotIndex > 0) {
+            return className.substring(0, lastDotIndex);
+        }
+
+        return NO_PACKAGE;
     }
 }
