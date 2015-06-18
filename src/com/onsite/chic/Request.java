@@ -19,11 +19,13 @@ public class Request {
     private static final Pattern SPLITTER = Pattern.compile(" ");
 
     private Chic chic;
+    private Server server;
     private Socket socket;
     private PrintWriter writer;
 
-    public Request(Chic chic, Socket socket) {
+    public Request(Chic chic, Server server, Socket socket) {
         this.chic = chic;
+        this.server = server;
         this.socket = socket;
     }
 
@@ -48,26 +50,34 @@ public class Request {
                 String verb = parts[0];
                 String path = parts[1];
 
-                if (!verb.equals("GET")) {
+                if (!verb.equals("GET") && !verb.equals("POST")) {
                     invalidVerb(verb);
                     return;
                 }
 
-                switch (path) {
-                case "/":
-                    index();
-                    return;
-                case "/classes":
-                    classes();
-                    return;
-                case "/packages":
-                    packages();
-                    return;
-                }
+                if (verb.equals("GET")) {
+                    switch (path) {
+                    case "/":
+                        index();
+                        return;
+                    case "/classes":
+                        classes();
+                        return;
+                    case "/packages":
+                        packages();
+                        return;
+                    }
 
-                if (path.startsWith("/package/")) {
-                    singlePackage(path.substring("/package/".length()));
-                    return;
+                    if (path.startsWith("/package/")) {
+                        singlePackage(path.substring("/package/".length()));
+                        return;
+                    }
+                } else {
+                    switch (path) {
+                    case "/shutdown":
+                        shutdown();
+                        return;
+                    }
                 }
 
                 invalidPath(path);
@@ -103,7 +113,7 @@ public class Request {
     }
 
     private void invalidVerb(String verb) {
-        printError(501, "Only GET requests are allowed, got: " + verb);
+        printError(501, "Only GET and POST requests are allowed, got: " + verb);
     }
 
     private void invalidPath(String path) {
@@ -172,5 +182,11 @@ public class Request {
         }
 
         printTemplate("package.html", packageName, classes.length, rows.toString());
+    }
+
+    private void shutdown() throws IOException {
+        server.shutdown();
+        printHeader(200, "text/plain");
+        print("The server is now shut down.");
     }
 }

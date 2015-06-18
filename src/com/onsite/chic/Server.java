@@ -3,6 +3,7 @@ package com.onsite.chic;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -57,7 +58,7 @@ public class Server {
             public void run() {
                 while (run) {
                     try {
-                        final Request request = new Request(chic, server.accept());
+                        final Request request = new Request(chic, Server.this, server.accept());
 
                         executor.submit(new Runnable() {
                             @Override
@@ -71,15 +72,24 @@ public class Server {
                             }
                         });
                     } catch (Exception e) {
-                        System.err.println("Error while trying to accept chic request: " + e);
-                        e.printStackTrace();
+                        // Don't log socket exceptions when shutting down
+                        if (run || !(e instanceof SocketException)) {
+                            System.err.println("Error while trying to accept chic request: " + e);
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
         });
     }
 
-    public void shutdown() {
+    public void shutdown() throws IOException {
         run = false;
+
+        try {
+            executor.shutdown();
+        } finally {
+            server.close();
+        }
     }
 }
