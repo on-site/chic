@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.MessageFormat;
+import java.util.SortedMap;
 import java.util.regex.Pattern;
 
 /**
@@ -139,6 +140,17 @@ public class Request {
     }
 
     private void packages() throws IOException {
-        printTemplate("packages.html");
+        SortedMap<String, Integer> packageCounts = chic.getPackageClassCounts();
+        StringBuilder rows = new StringBuilder();
+
+        for (String key : packageCounts.keySet()) {
+            rows.append("<tr><td>");
+            rows.append(key);
+            rows.append("</td><td>");
+            rows.append(packageCounts.get(key));
+            rows.append("</td></tr>\n");
+        }
+
+        printTemplate("packages.html", packageCounts.size(), rows.toString());
     }
 }

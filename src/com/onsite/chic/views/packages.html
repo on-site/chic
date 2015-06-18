@@ -1,9 +1,30 @@
 <html>
   <head>
     <title>Chic - Packages</title>
+
+    <style type="text/css">
+      table.bordered, table.bordered th, table.bordered td '{' border: 1px solid #000000; '}'
+    </style>
   </head>
 
   <body>
     <h1><a href="/">Chic</a> - Packages</h1>
+
+    <p>
+      Total number of packages loaded: {0}
+    </p>
+
+    <table class="bordered">
+      <thead>
+        <tr>
+          <th>Package Name</th>
+          <th>Number of Classes</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {1}
+      </tbody>
+    </table>
   </body>
 </html>
