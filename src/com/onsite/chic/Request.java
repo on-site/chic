@@ -1,6 +1,8 @@
 package com.onsite.chic;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -112,8 +114,14 @@ public class Request {
 
     public void printTemplate(String file, Object... args) throws IOException {
         StringBuilder view = new StringBuilder();
+        InputStream stream = getClass().getResourceAsStream("views/" + file);
 
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("views/" + file), "UTF-8"))) {
+        // When the jar changes, this seems to happen sometimes
+        if (stream == null) {
+            throw new FileNotFoundException("Cannot find template " + file);
+        }
+
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(stream, "UTF-8"))) {
             String line = input.readLine();
 
             while (line != null) {

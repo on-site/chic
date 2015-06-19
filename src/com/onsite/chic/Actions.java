@@ -1,5 +1,6 @@
 package com.onsite.chic;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.SortedMap;
 
@@ -18,29 +19,33 @@ public class Actions {
     }
 
     public boolean process() throws IOException {
-        if (request.getVerb().equals("GET")) {
-            switch (request.getPath()) {
-            case "/":
-                index();
-                return true;
-            case "/classes":
-                classes();
-                return true;
-            case "/packages":
-                packages();
-                return true;
-            }
+        try {
+            if (request.getVerb().equals("GET")) {
+                switch (request.getPath()) {
+                case "/":
+                    index();
+                    return true;
+                case "/classes":
+                    classes();
+                    return true;
+                case "/packages":
+                    packages();
+                    return true;
+                }
 
-            if (request.getPath().startsWith("/package/")) {
-                singlePackage(request.getPath().substring("/package/".length()));
-                return true;
+                if (request.getPath().startsWith("/package/")) {
+                    singlePackage(request.getPath().substring("/package/".length()));
+                    return true;
+                }
+            } else {
+                switch (request.getPath()) {
+                case "/shutdown":
+                    shutdown();
+                    return true;
+                }
             }
-        } else {
-            switch (request.getPath()) {
-            case "/shutdown":
-                shutdown();
-                return true;
-            }
+        } catch (FileNotFoundException e) {
+            return false;
         }
 
         return false;
