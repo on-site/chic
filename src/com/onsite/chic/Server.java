@@ -37,6 +37,10 @@ public class Server {
         setBindAddress(bindAddress);
     }
 
+    public Chic getChic() {
+        return chic;
+    }
+
     public void setPort(int port) {
         this.port = port;
     }
@@ -100,7 +104,7 @@ public class Server {
             public void run() {
                 while (run) {
                     try {
-                        final Request request = new Request(chic, Server.this, server.accept());
+                        final Request request = new Request(Server.this, server.accept());
 
                         executor.submit(new Runnable() {
                             @Override

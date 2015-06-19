@@ -7,7 +7,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.MessageFormat;
-import java.util.SortedMap;
 import java.util.regex.Pattern;
 
 /**
@@ -18,13 +17,13 @@ import java.util.regex.Pattern;
 public class Request {
     private static final Pattern SPLITTER = Pattern.compile(" ");
 
-    private Chic chic;
     private Server server;
     private Socket socket;
+    private String verb;
+    private String path;
     private PrintWriter writer;
 
-    public Request(Chic chic, Server server, Socket socket) {
-        this.chic = chic;
+    public Request(Server server, Socket socket) {
         this.server = server;
         this.socket = socket;
     }
@@ -47,37 +46,11 @@ public class Request {
                     return;
                 }
 
-                String verb = parts[0];
-                String path = parts[1];
+                verb = parts[0];
+                path = parts[1];
 
-                if (!verb.equals("GET") && !verb.equals("POST")) {
-                    invalidVerb(verb);
+                if (new Actions(this).process()) {
                     return;
-                }
-
-                if (verb.equals("GET")) {
-                    switch (path) {
-                    case "/":
-                        index();
-                        return;
-                    case "/classes":
-                        classes();
-                        return;
-                    case "/packages":
-                        packages();
-                        return;
-                    }
-
-                    if (path.startsWith("/package/")) {
-                        singlePackage(path.substring("/package/".length()));
-                        return;
-                    }
-                } else {
-                    switch (path) {
-                    case "/shutdown":
-                        shutdown();
-                        return;
-                    }
                 }
 
                 invalidPath(path);
@@ -85,6 +58,18 @@ public class Request {
         } finally {
             socket.close();
         }
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public String getVerb() {
+        return verb;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     private void print(String message) {
@@ -120,7 +105,12 @@ public class Request {
         printError(404, "Invalid path: " + path);
     }
 
-    private void printTemplate(String file, Object... args) throws IOException {
+    public void printText(String message) {
+        printHeader(200, "text/plain");
+        print(message);
+    }
+
+    public void printTemplate(String file, Object... args) throws IOException {
         StringBuilder view = new StringBuilder();
 
         try (BufferedReader input = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("views/" + file), "UTF-8"))) {
@@ -135,58 +125,5 @@ public class Request {
 
         printHeader();
         print(MessageFormat.format(view.toString(), args));
-    }
-
-    private void index() throws IOException {
-        printTemplate("index.html");
-    }
-
-    private void classes() throws IOException {
-        Class[] classes = chic.getSortedClasses();
-        StringBuilder rows = new StringBuilder();
-
-        for (Class clazz : classes) {
-            rows.append("<tr><td>");
-            rows.append(clazz.getName());
-            rows.append("</td></tr>\n");
-        }
-
-        printTemplate("classes.html", classes.length, rows.toString());
-    }
-
-    private void packages() throws IOException {
-        SortedMap<String, Integer> packageCounts = chic.getPackageClassCounts();
-        StringBuilder rows = new StringBuilder();
-
-        for (String key : packageCounts.keySet()) {
-            rows.append("<tr><td><a href=\"/package/");
-            rows.append(key);
-            rows.append("\">");
-            rows.append(key);
-            rows.append("</td><td>");
-            rows.append(packageCounts.get(key));
-            rows.append("</td></tr>\n");
-        }
-
-        printTemplate("packages.html", packageCounts.size(), rows.toString());
-    }
-
-    private void singlePackage(String packageName) throws IOException {
-        Class[] classes = chic.getSortedClasses(packageName);
-        StringBuilder rows = new StringBuilder();
-
-        for (Class clazz : classes) {
-            rows.append("<tr><td>");
-            rows.append(clazz.getName());
-            rows.append("</td></tr>\n");
-        }
-
-        printTemplate("package.html", packageName, classes.length, rows.toString());
-    }
-
-    private void shutdown() throws IOException {
-        server.shutdown();
-        printHeader(200, "text/plain");
-        print("The server is now shut down.");
     }
 }
