@@ -22,6 +22,10 @@ public class Package extends Action {
     private String getPackageName() {
         if (packageName == null) {
             packageName = request.getPath().substring("/package/".length());
+
+            if (packageName.endsWith(".txt")) {
+                packageName = packageName.substring(0, packageName.length() - ".txt".length());
+            }
         }
 
         return packageName;
@@ -33,6 +37,19 @@ public class Package extends Action {
         }
 
         return classes;
+    }
+
+    private String getTextTable() {
+        StringBuilder table = new StringBuilder();
+        table.append("Class Name\n");
+        table.append("----------\n");
+
+        for (Class clazz : getClasses()) {
+            table.append(clazz.getName());
+            table.append("\n");
+        }
+
+        return table.toString();
     }
 
     private String getRowsHtml() {
@@ -49,6 +66,10 @@ public class Package extends Action {
 
     @Override
     public void process() throws IOException {
-        request.printTemplate("package.html", getPackageName(), getClasses().length, getRowsHtml());
+        if (isTextRequest()) {
+            request.printTemplate("package.txt", getPackageName(), getClasses().length, getTextTable());
+        } else {
+            request.printTemplate("package.html", getPackageName(), getClasses().length, getRowsHtml());
+        }
     }
 }

@@ -15,7 +15,7 @@ public class Classes extends Action {
 
     @Override
     public boolean canProcess(Request request) {
-        return isGet(request, "/classes");
+        return isGet(request, "/classes", "/classes.txt");
     }
 
     private Class[] getClasses() {
@@ -24,6 +24,19 @@ public class Classes extends Action {
         }
 
         return classes;
+    }
+
+    private String getTextTable() {
+        StringBuilder table = new StringBuilder();
+        table.append("Class Name\n");
+        table.append("----------\n");
+
+        for (Class clazz : getClasses()) {
+            table.append(clazz.getName());
+            table.append("\n");
+        }
+
+        return table.toString();
     }
 
     private String getRowsHtml() {
@@ -40,6 +53,10 @@ public class Classes extends Action {
 
     @Override
     public void process() throws IOException {
-        request.printTemplate("classes.html", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), getRowsHtml());
+        if (isTextRequest()) {
+            request.printTemplate("classes.txt", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), getTextTable());
+        } else {
+            request.printTemplate("classes.html", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), getRowsHtml());
+        }
     }
 }

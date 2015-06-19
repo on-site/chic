@@ -13,10 +13,11 @@ import java.util.SortedMap;
  */
 public class Packages extends Action {
     private SortedMap<String, Integer> packageCounts;
+    private Integer packageNameWidth;
 
     @Override
     public boolean canProcess(Request request) {
-        return isGet(request, "/packages");
+        return isGet(request, "/packages", "/packages.txt");
     }
 
     private SortedMap<String, Integer> getPackageCounts() {
@@ -25,6 +26,39 @@ public class Packages extends Action {
         }
 
         return packageCounts;
+    }
+
+    private int getPackageNameWidth() {
+        if (packageNameWidth == null) {
+            packageNameWidth = "Package Name".length();
+
+            for (String key : getPackageCounts().keySet()) {
+                if (key.length() > packageNameWidth) {
+                    packageNameWidth = key.length();
+                }
+            }
+
+            packageNameWidth++;
+        }
+
+        return packageNameWidth;
+    }
+
+    private String getTextTable() {
+        StringBuilder table = new StringBuilder();
+        table.append(spacePad("Package Name", getPackageNameWidth()));
+        table.append("| Number of Classes\n");
+        table.append(dashes(getPackageNameWidth()));
+        table.append("+------------------\n");
+
+        for (String key : getPackageCounts().keySet()) {
+            table.append(spacePad(key, getPackageNameWidth()));
+            table.append("| ");
+            table.append(getPackageCounts().get(key));
+            table.append("\n");
+        }
+
+        return table.toString();
     }
 
     private String getRowsHtml() {
@@ -45,6 +79,10 @@ public class Packages extends Action {
 
     @Override
     public void process() throws IOException {
-        request.printTemplate("packages.html", getPackageCounts().size(), getRowsHtml());
+        if (isTextRequest()) {
+            request.printTemplate("packages.txt", getPackageCounts().size(), getTextTable());
+        } else {
+            request.printTemplate("packages.html", getPackageCounts().size(), getRowsHtml());
+        }
     }
 }

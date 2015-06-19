@@ -1,0 +1,3 @@
+Total number of packages loaded: {0}
+
+{1}

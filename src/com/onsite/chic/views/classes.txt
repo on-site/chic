@@ -1,0 +1,9 @@
+Total number of classes loaded: {0}
+
+VM loaded class count: {1}
+
+VM unloaded class count: {2}
+
+VM total loaded class count: {3}
+
+{4}
