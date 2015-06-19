@@ -51,15 +51,9 @@ public class Request {
                 verb = parts[0];
                 path = parts[1];
 
-                if (new Assets(this).process()) {
-                    return;
+                if (!server.getRouter().route(this)) {
+                    invalidPath(path);
                 }
-
-                if (new Actions(this).process()) {
-                    return;
-                }
-
-                invalidPath(path);
             }
         } finally {
             socket.close();
@@ -88,10 +82,6 @@ public class Request {
 
     public void printHeader(int status, String mimeType) {
         print("HTTP/1.0 " + status + " OK\r\nContent-Type: " + mimeType + ";charset=UTF-8\r\n\r\n");
-    }
-
-    private void printHeader() {
-        printHeader(200, "text/html");
     }
 
     private void printError(int status, String message) {
@@ -131,7 +121,32 @@ public class Request {
             }
         }
 
-        printHeader();
+        printHeader(200, getMimeType(file, "text/html"));
         print(MessageFormat.format(view.toString(), args));
+    }
+
+    public static String getMimeType(String path) {
+        return getMimeType(path, "text/plain");
+    }
+
+    public static String getMimeType(String path, String ifUnknown) {
+        int lastDotIndex = path.lastIndexOf('.');
+
+        if (lastDotIndex < 0) {
+            return ifUnknown;
+        }
+
+        switch (path.substring(lastDotIndex)) {
+        case ".js":
+            return "text/javascript";
+        case ".css":
+            return "text/css";
+        case ".html":
+            return "text/html";
+        case ".txt":
+            return "text/plain";
+        }
+
+        return ifUnknown;
     }
 }

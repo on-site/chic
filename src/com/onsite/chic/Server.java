@@ -19,6 +19,7 @@ public class Server {
     private static final String DEFAULT_BIND_ADDRESS = "127.0.0.1";
 
     private Chic chic;
+    private Router router = new Router();
     private ServerSocket server;
     private int port;
     private int maxThreads;
@@ -39,6 +40,10 @@ public class Server {
 
     public Chic getChic() {
         return chic;
+    }
+
+    public Router getRouter() {
+        return router;
     }
 
     public void setPort(int port) {
