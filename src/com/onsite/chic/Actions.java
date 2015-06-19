@@ -3,6 +3,13 @@ package com.onsite.chic;
 import java.io.IOException;
 import java.util.SortedMap;
 
+/**
+ * All the actions of the UI for Chic are contained here.  If the
+ * request path points to one of the actions, process() will return
+ * true after handling it.
+ *
+ * @author Mike Virata-Stone
+ */
 public class Actions {
     private Request request;
 

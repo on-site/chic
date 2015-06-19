@@ -49,6 +49,10 @@ public class Request {
                 verb = parts[0];
                 path = parts[1];
 
+                if (new Assets(this).process()) {
+                    return;
+                }
+
                 if (new Actions(this).process()) {
                     return;
                 }
@@ -72,15 +76,15 @@ public class Request {
         return path;
     }
 
-    private void print(String message) {
+    public void print(String message) {
         writer.print(message);
     }
 
-    private void println(String message) {
+    public void println(String message) {
         writer.println(message);
     }
 
-    private void printHeader(int status, String mimeType) {
+    public void printHeader(int status, String mimeType) {
         print("HTTP/1.0 " + status + " OK\r\nContent-Type: " + mimeType + ";charset=UTF-8\r\n\r\n");
     }
 
@@ -95,10 +99,6 @@ public class Request {
 
     private void invalidRequest(String request) {
         printError(400, "Invalid request: " + request);
-    }
-
-    private void invalidVerb(String verb) {
-        printError(501, "Only GET and POST requests are allowed, got: " + verb);
     }
 
     private void invalidPath(String path) {
