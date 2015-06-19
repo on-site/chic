@@ -56,7 +56,8 @@ public class Actions {
     }
 
     private void classes() throws IOException {
-        Class[] classes = request.getServer().getChic().getSortedClasses();
+        Chic chic = request.getServer().getChic();
+        Class[] classes = chic.getSortedClasses();
         StringBuilder rows = new StringBuilder();
 
         for (Class clazz : classes) {
@@ -65,7 +66,7 @@ public class Actions {
             rows.append("</td></tr>\n");
         }
 
-        request.printTemplate("classes.html", classes.length, rows.toString());
+        request.printTemplate("classes.html", classes.length, chic.getVMClassCount(), chic.getVMUnloadedClassCount(), chic.getVMTotalClassCount(), rows.toString());
     }
 
     private void packages() throws IOException {

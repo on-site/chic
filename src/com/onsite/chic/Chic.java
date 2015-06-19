@@ -2,6 +2,8 @@ package com.onsite.chic;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.lang.management.ClassLoadingMXBean;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -72,6 +74,21 @@ public class Chic {
         }
 
         server.start();
+    }
+
+    public int getVMClassCount() {
+        ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
+        return bean.getLoadedClassCount();
+    }
+
+    public long getVMUnloadedClassCount() {
+        ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
+        return bean.getUnloadedClassCount();
+    }
+
+    public long getVMTotalClassCount() {
+        ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
+        return bean.getTotalLoadedClassCount();
     }
 
     public Class[] getClasses() {
