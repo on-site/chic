@@ -25,6 +25,7 @@ public class Chic {
 
     private Instrumentation instrumentation;
     private Map<String, String> args;
+    private Boolean wasClassLoggingOn;
 
     private static final Comparator<Class> CLASS_NAME_COMPARATOR = new Comparator<Class>() {
         @Override
@@ -76,19 +77,34 @@ public class Chic {
         server.start();
     }
 
+    private ClassLoadingMXBean getClassLoadingBean() {
+        return ManagementFactory.getClassLoadingMXBean();
+    }
+
     public int getVMClassCount() {
-        ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
-        return bean.getLoadedClassCount();
+        return getClassLoadingBean().getLoadedClassCount();
     }
 
     public long getVMUnloadedClassCount() {
-        ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
-        return bean.getUnloadedClassCount();
+        return getClassLoadingBean().getUnloadedClassCount();
     }
 
     public long getVMTotalClassCount() {
-        ClassLoadingMXBean bean = ManagementFactory.getClassLoadingMXBean();
-        return bean.getTotalLoadedClassCount();
+        return getClassLoadingBean().getTotalLoadedClassCount();
+    }
+
+    public void startClassLogging() {
+        if (wasClassLoggingOn == null) {
+            wasClassLoggingOn = getClassLoadingBean().isVerbose();
+        }
+
+        getClassLoadingBean().setVerbose(true);
+    }
+
+    public void stopClassLogging() {
+        if (wasClassLoggingOn != null) {
+            getClassLoadingBean().setVerbose(wasClassLoggingOn);
+        }
     }
 
     public Class[] getClasses() {

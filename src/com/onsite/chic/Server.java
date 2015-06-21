@@ -81,6 +81,7 @@ public class Server {
 
         setupThreadPool();
         startServer();
+        getChic().startClassLogging();
     }
 
     private void setupThreadPool() {
@@ -138,6 +139,7 @@ public class Server {
         run = false;
 
         try {
+            getChic().stopClassLogging();
             executor.shutdown();
         } finally {
             server.close();
