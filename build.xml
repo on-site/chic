@@ -6,7 +6,7 @@
   <property name="build.native" location="build/com/onsite/chic" />
   <property name="jdk.home" location="${env.JAVA_HOME}" />
   <property name="dist" location="dist" />
-  <property name="version" value="0.1.0" />
+  <property name="version" value="0.2.0" />
 
   <target name="init">
     <mkdir dir="${build}" />
