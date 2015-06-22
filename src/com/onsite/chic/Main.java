@@ -20,8 +20,6 @@ import java.security.ProtectionDomain;
  * @author Mike Virata-Stone
  */
 public class Main {
-    private static boolean nativeLoaded = false;
-
     public static void main(String[] args) throws MalformedURLException, ReflectiveOperationException, URISyntaxException {
         if (args.length < 1) {
             System.err.println("usage: java chic.jar <pid> [agent_options]");
@@ -99,35 +97,11 @@ public class Main {
 
     // Start in a separate classloader so a new version can be loaded without conflict
     private static void startChic(String args, Instrumentation instrumentation) throws IOException, MalformedURLException, ReflectiveOperationException, URISyntaxException {
-        loadNative();
         CachedClassLoader classLoader = new CachedClassLoader(getJarFile(args), Main.class.getClassLoader());
         Class<?> Chic = Class.forName("com.onsite.chic.Chic", true, classLoader);
         Constructor<?> constructor = Chic.getConstructor(Instrumentation.class, String.class);
         Method start = Chic.getMethod("start");
         Object chic = constructor.newInstance(instrumentation, args);
         start.invoke(chic);
-    }
-
-    private static synchronized void loadNative() throws IOException {
-        if (nativeLoaded) {
-            return;
-        }
-
-        nativeLoaded = true;
-        File nativeFile = File.createTempFile("chic.native.StdIOCapturer", ".so");
-        nativeFile.deleteOnExit();
-        byte[] buffer = new byte[1024];
-
-        try (FileOutputStream output = new FileOutputStream(nativeFile);
-                InputStream input = Main.class.getResourceAsStream("StdIOCapturer.so")) {
-            int size = input.read(buffer);
-
-            while (size >= 0) {
-                output.write(buffer, 0, size);
-                size = input.read(buffer);
-            }
-        }
-
-        System.load(nativeFile.getAbsolutePath());
     }
 }
