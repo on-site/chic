@@ -9,6 +9,8 @@
 using namespace std;
 
 StdIOCapturer::StdIOCapturer(int descriptor) {
+    // TODO: Make sure O_CLOEXEC is set on the new stream
+    // TODO: Tee the stdout instead of consuming it
     if ((descriptor != 1) && (descriptor != 2)) {
         throw std::runtime_error("Can only redirect stdout or stderr!");
     }

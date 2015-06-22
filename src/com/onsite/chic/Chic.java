@@ -26,6 +26,7 @@ public class Chic {
     private Instrumentation instrumentation;
     private Map<String, String> args;
     private Boolean wasClassLoggingOn;
+    private ClassLogger classLogger = new ClassLogger();
 
     private static final Comparator<Class> CLASS_NAME_COMPARATOR = new Comparator<Class>() {
         @Override
@@ -98,6 +99,7 @@ public class Chic {
             wasClassLoggingOn = getClassLoadingBean().isVerbose();
         }
 
+        classLogger.start();
         getClassLoadingBean().setVerbose(true);
     }
 
@@ -105,6 +107,12 @@ public class Chic {
         if (wasClassLoggingOn != null) {
             getClassLoadingBean().setVerbose(wasClassLoggingOn);
         }
+
+        classLogger.stop();
+    }
+
+    public List<LoggedClass> getLoggedClasses() {
+        return classLogger.getClasses();
     }
 
     public Class[] getClasses() {

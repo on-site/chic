@@ -1,0 +1,3 @@
+Total number of classes logged: {0}
+
+{1}
