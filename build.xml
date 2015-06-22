@@ -1,11 +1,16 @@
 <project name="Chic" default="dist" basedir=".">
+  <property environment="env" />
   <property name="src" location="src" />
+  <property name="src.native" location="native" />
   <property name="build" location="build" />
+  <property name="build.native" location="build/com/onsite/chic" />
+  <property name="jdk.home" location="${env.JAVA_HOME}" />
   <property name="dist" location="dist" />
   <property name="version" value="0.1.0" />
 
   <target name="init">
     <mkdir dir="${build}" />
+    <mkdir dir="${build.native}" />
     <mkdir dir="${dist}" />
   </target>
 
@@ -14,6 +19,20 @@
       <compilerarg value="-Xlint:deprecation" />
       <compilerarg value="-Xlint:unchecked" />
     </javac>
+
+    <javah destdir="${src.native}" classpath="${build}" class="com.onsite.chic.StdIOCapturer" />
+
+    <exec dir="." executable="g++">
+      <arg value="-shared" />
+      <arg value="-fPIC" />
+      <arg value="-Wall" />
+      <arg value="-fno-strict-aliasing" />
+      <arg value="-I${jdk.home}/include" />
+      <arg value="-I${jdk.home}/include/linux" />
+      <arg value="${src.native}/StdIOCapturer.cpp" />
+      <arg value="-o" />
+      <arg value="${build.native}/StdIOCapturer.so" />
+    </exec>
 
     <copy todir="${build}">
       <fileset dir="${src}">
@@ -33,6 +52,7 @@
   </target>
 
   <target name="clean">
+    <delete dir="${build.native}" />
     <delete dir="${build}" />
     <delete dir="${dist}" />
   </target>
