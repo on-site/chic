@@ -83,9 +83,9 @@ public class LoggedClasses extends Action {
         table.append("+----------\n");
 
         for (LoggedClass log : getClasses()) {
-            table.append(log.getClassName());
+            table.append(spacePad(log.getClassName(), getClassNameWidth()));
             table.append("| ");
-            table.append(log.getLoadedFrom());
+            table.append(spacePad(log.getLoadedFrom(), getLoadLocationWidth()));
             table.append("| ");
             table.append(format(log.getLoggedAt()));
             table.append("\n");

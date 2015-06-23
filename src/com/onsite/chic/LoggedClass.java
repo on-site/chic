@@ -11,11 +11,13 @@ public class LoggedClass {
     private Date loggedAt;
     private String className;
     private String loadedFrom;
+    private String packageName;
 
     public LoggedClass(String className, String loadedFrom) {
         this.loggedAt = new Date();
         this.className = className;
         this.loadedFrom = loadedFrom;
+        this.packageName = Chic.getPackageName(className);
     }
 
     public Date getLoggedAt() {
@@ -28,5 +30,9 @@ public class LoggedClass {
 
     public String getLoadedFrom() {
         return loadedFrom;
+    }
+
+    public String getPackageName() {
+        return packageName;
     }
 }

@@ -7,6 +7,8 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 public class ClassLogger {
     private static final Pattern CLASS_LOG_PATTERN = Pattern.compile("^\\[Loaded (?<className>.*?) from (?<loadedFrom>.*?)\\]$");
     private List<LoggedClass> classes = new ArrayList<>();
+    private SortedMap<String, LoggedPackage> packages = new TreeMap<>();
     private volatile boolean stopped = false;
     private StdIOCapturer capturer;
     private PipedInputStream pipedInput;
@@ -148,11 +151,31 @@ public class ClassLogger {
 
         String className = matcher.group("className");
         String loadedFrom = matcher.group("loadedFrom");
-        classes.add(new LoggedClass(className, loadedFrom));
+        LoggedClass log = new LoggedClass(className, loadedFrom);
+
+        synchronized (this) {
+            classes.add(log);
+            getPackage(log.getPackageName()).add(log);
+        }
     }
 
-    public List<LoggedClass> getClasses() {
+    public synchronized List<LoggedClass> getClasses() {
         return new ArrayList<LoggedClass>(classes);
+    }
+
+    public synchronized List<LoggedPackage> getPackages() {
+        return new ArrayList<LoggedPackage>(packages.values());
+    }
+
+    public synchronized LoggedPackage getPackage(String packageName) {
+        LoggedPackage log = packages.get(packageName);
+
+        if (log == null) {
+            log = new LoggedPackage(packageName);
+            packages.put(packageName, log);
+        }
+
+        return log;
     }
 
     public void stop() {

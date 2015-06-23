@@ -115,6 +115,10 @@ public class Chic {
         return classLogger.getClasses();
     }
 
+    public List<LoggedPackage> getLoggedPackages() {
+        return classLogger.getPackages();
+    }
+
     public Class[] getClasses() {
         return instrumentation.getAllLoadedClasses();
     }
@@ -155,7 +159,10 @@ public class Chic {
     }
 
     private static String getPackageName(Class clazz) {
-        String className = clazz.getName();
+        return getPackageName(clazz.getName());
+    }
+
+    public static String getPackageName(String className) {
         int lastDotIndex = className.lastIndexOf('.');
 
         if (lastDotIndex > 0) {
