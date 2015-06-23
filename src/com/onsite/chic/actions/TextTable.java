@@ -58,7 +58,7 @@ public class TextTable extends Table {
 
             table.append(row[i]);
 
-            if (i < row.length) {
+            if (i < row.length - 1) {
                 appendSpaces(row[i], getSize(i));
             }
         }
