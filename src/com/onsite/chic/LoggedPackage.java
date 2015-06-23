@@ -39,4 +39,8 @@ public class LoggedPackage {
     public synchronized void add(LoggedClass log) {
         classes.add(log);
     }
+
+    public synchronized List<LoggedClass> getClasses() {
+        return new ArrayList<LoggedClass>(classes);
+    }
 }

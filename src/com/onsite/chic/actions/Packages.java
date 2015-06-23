@@ -69,7 +69,7 @@ public class Packages extends Action {
             rows.append(key);
             rows.append("\">");
             rows.append(key);
-            rows.append("</td><td>");
+            rows.append("</a></td><td>");
             rows.append(getPackageCounts().get(key));
             rows.append("</td></tr>\n");
         }

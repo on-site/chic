@@ -124,9 +124,11 @@ public class LoggedPackages extends Action {
         StringBuilder rows = new StringBuilder();
 
         for (LoggedPackage log : getPackages()) {
-            rows.append("<tr><td>");
+            rows.append("<tr><td><a href=\"/logged_package/");
             rows.append(log.getPackageName());
-            rows.append("</td><td>");
+            rows.append("\">");
+            rows.append(log.getPackageName());
+            rows.append("</a></td><td>");
             rows.append(log.size());
             rows.append("</td><td>");
             rows.append(format(log.getFirstLoggedAt()));

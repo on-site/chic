@@ -5,7 +5,7 @@ import com.onsite.chic.actions.Asset;
 import com.onsite.chic.actions.Classes;
 import com.onsite.chic.actions.Index;
 import com.onsite.chic.actions.LoggedClasses;
-//import com.onsite.chic.actions.LoggedPackage;
+import com.onsite.chic.actions.LoggedSinglePackage;
 import com.onsite.chic.actions.LoggedPackages;
 import com.onsite.chic.actions.Package;
 import com.onsite.chic.actions.Packages;
@@ -28,7 +28,7 @@ public class Router {
         routes.add(new Classes());
         routes.add(new LoggedClasses());
         routes.add(new LoggedPackages());
-        //routes.add(new LoggedPackage());
+        routes.add(new LoggedSinglePackage());
         routes.add(new Packages());
         routes.add(new Package());
         routes.add(new Shutdown());

@@ -1,0 +1,9 @@
+Package: {0}
+
+Total number of classes logged: {1}
+
+Time first class was logged at: {2}
+
+Time last class was logged at: {3}
+
+{4}

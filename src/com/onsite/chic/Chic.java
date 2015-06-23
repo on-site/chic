@@ -119,6 +119,10 @@ public class Chic {
         return classLogger.getPackages();
     }
 
+    public LoggedPackage getLoggedPackage(String packageName) {
+        return classLogger.getPackage(packageName);
+    }
+
     public Class[] getClasses() {
         return instrumentation.getAllLoadedClasses();
     }
