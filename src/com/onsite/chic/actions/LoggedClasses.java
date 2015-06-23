@@ -20,7 +20,7 @@ public class LoggedClasses extends Action {
 
     @Override
     public boolean canProcess(Request request) {
-        return isGet(request, "/logged_classes", "/logged_classes.txt");
+        return isGet(request, "/logged_classes", "/logged_classes.txt", "/logged_classes.csv");
     }
 
     private List<LoggedClass> getClasses() {
@@ -47,7 +47,9 @@ public class LoggedClasses extends Action {
 
     @Override
     public void process() throws IOException {
-        if (isTextRequest()) {
+        if (isCsvRequest()) {
+            request.printCsv(render(new CsvTable()));
+        } else if (isTextRequest()) {
             request.printTemplate("logged_classes.txt", getClasses().size(), render(new TextTable()));
         } else {
             request.printTemplate("logged_classes.html", getClasses().size(), render(new HtmlTable()));

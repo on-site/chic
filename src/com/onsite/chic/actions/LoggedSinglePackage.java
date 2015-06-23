@@ -33,6 +33,8 @@ public class LoggedSinglePackage extends Action {
 
             if (packageName.endsWith(".txt")) {
                 packageName = packageName.substring(0, packageName.length() - ".txt".length());
+            } else if (packageName.endsWith(".csv")) {
+                packageName = packageName.substring(0, packageName.length() - ".csv".length());
             }
         }
 
@@ -83,7 +85,9 @@ public class LoggedSinglePackage extends Action {
 
     @Override
     public void process() throws IOException {
-        if (isTextRequest()) {
+        if (isCsvRequest()) {
+            request.printCsv(render(new CsvTable()));
+        } else if (isTextRequest()) {
             request.printTemplate("logged_package.txt", getPackageName(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new TextTable()));
         } else {
             request.printTemplate("logged_package.html", getPackageName(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new HtmlTable()));

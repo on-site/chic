@@ -25,6 +25,8 @@ public class Package extends Action {
 
             if (packageName.endsWith(".txt")) {
                 packageName = packageName.substring(0, packageName.length() - ".txt".length());
+            } else if (packageName.endsWith(".csv")) {
+                packageName = packageName.substring(0, packageName.length() - ".csv".length());
             }
         }
 
@@ -51,7 +53,9 @@ public class Package extends Action {
 
     @Override
     public void process() throws IOException {
-        if (isTextRequest()) {
+        if (isCsvRequest()) {
+            request.printCsv(render(new CsvTable()));
+        } else if (isTextRequest()) {
             request.printTemplate("package.txt", getPackageName(), getClasses().length, render(new TextTable()));
         } else {
             request.printTemplate("package.html", getPackageName(), getClasses().length, render(new HtmlTable()));

@@ -15,7 +15,7 @@ public class Classes extends Action {
 
     @Override
     public boolean canProcess(Request request) {
-        return isGet(request, "/classes", "/classes.txt");
+        return isGet(request, "/classes", "/classes.txt", "/classes.csv");
     }
 
     private Class[] getClasses() {
@@ -38,7 +38,9 @@ public class Classes extends Action {
 
     @Override
     public void process() throws IOException {
-        if (isTextRequest()) {
+        if (isCsvRequest()) {
+            request.printCsv(render(new CsvTable()));
+        } else if (isTextRequest()) {
             request.printTemplate("classes.txt", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), render(new TextTable()));
         } else {
             request.printTemplate("classes.html", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), render(new HtmlTable()));

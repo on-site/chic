@@ -102,6 +102,11 @@ public class Request {
         print(message);
     }
 
+    public void printCsv(String csv) {
+        printHeader(200, "text/csv");
+        print(csv);
+    }
+
     public void printTemplate(String file, Object... args) throws IOException {
         StringBuilder view = new StringBuilder();
         InputStream stream = getClass().getResourceAsStream("views/" + file);
@@ -145,6 +150,8 @@ public class Request {
             return "text/html";
         case ".txt":
             return "text/plain";
+        case ".csv":
+            return "text/csv";
         }
 
         return ifUnknown;

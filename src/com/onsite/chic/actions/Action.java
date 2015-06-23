@@ -58,6 +58,10 @@ public abstract class Action {
         return request.getPath().endsWith(".txt");
     }
 
+    protected boolean isCsvRequest() {
+        return request.getPath().endsWith(".csv");
+    }
+
     protected Server getServer() {
         return request.getServer();
     }

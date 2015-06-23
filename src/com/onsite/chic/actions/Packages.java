@@ -16,7 +16,7 @@ public class Packages extends Action {
 
     @Override
     public boolean canProcess(Request request) {
-        return isGet(request, "/packages", "/packages.txt");
+        return isGet(request, "/packages", "/packages.txt", "/packages.csv");
     }
 
     private SortedMap<String, Integer> getPackageCounts() {
@@ -40,7 +40,9 @@ public class Packages extends Action {
 
     @Override
     public void process() throws IOException {
-        if (isTextRequest()) {
+        if (isCsvRequest()) {
+            request.printCsv(render(new CsvTable()));
+        } else if (isTextRequest()) {
             request.printTemplate("packages.txt", getPackageCounts().size(), render(new TextTable()));
         } else {
             request.printTemplate("packages.html", getPackageCounts().size(), render(new HtmlTable()));
