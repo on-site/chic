@@ -26,37 +26,22 @@ public class Classes extends Action {
         return classes;
     }
 
-    private String getTextTable() {
-        StringBuilder table = new StringBuilder();
-        table.append("Class Name\n");
-        table.append("----------\n");
+    private String render(Table table) {
+        table.header("Class Name");
 
         for (Class clazz : getClasses()) {
-            table.append(clazz.getName());
-            table.append("\n");
+            table.row(clazz.getName());
         }
 
-        return table.toString();
-    }
-
-    private String getRowsHtml() {
-        StringBuilder rows = new StringBuilder();
-
-        for (Class clazz : getClasses()) {
-            rows.append("<tr><td>");
-            rows.append(clazz.getName());
-            rows.append("</td></tr>\n");
-        }
-
-        return rows.toString();
+        return table.render();
     }
 
     @Override
     public void process() throws IOException {
         if (isTextRequest()) {
-            request.printTemplate("classes.txt", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), getTextTable());
+            request.printTemplate("classes.txt", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), render(new TextTable()));
         } else {
-            request.printTemplate("classes.html", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), getRowsHtml());
+            request.printTemplate("classes.html", getClasses().length, getChic().getVMClassCount(), getChic().getVMUnloadedClassCount(), getChic().getVMTotalClassCount(), render(new HtmlTable()));
         }
     }
 }

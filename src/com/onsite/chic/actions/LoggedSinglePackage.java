@@ -21,8 +21,6 @@ public class LoggedSinglePackage extends Action {
     private List<LoggedClass> classes;
     private String firstLoggedAt;
     private String lastLoggedAt;
-    private Integer classNameWidth;
-    private Integer loadLocationWidth;
 
     @Override
     public boolean canProcess(Request request) {
@@ -65,40 +63,6 @@ public class LoggedSinglePackage extends Action {
         return lastLoggedAt;
     }
 
-    private int getClassNameWidth() {
-        if (classNameWidth == null) {
-            loadWidths();
-        }
-
-        return classNameWidth;
-    }
-
-    private int getLoadLocationWidth() {
-        if (loadLocationWidth == null) {
-            loadWidths();
-        }
-
-        return loadLocationWidth;
-    }
-
-    private void loadWidths() {
-        classNameWidth = "Class Name".length();
-        loadLocationWidth = "Loaded From".length();
-
-        for (LoggedClass log : getClasses()) {
-            if (log.getClassName().length() > classNameWidth) {
-                classNameWidth = log.getClassName().length();
-            }
-
-            if (log.getLoadedFrom().length() > loadLocationWidth) {
-                loadLocationWidth = log.getLoadedFrom().length();
-            }
-        }
-
-        classNameWidth++;
-        loadLocationWidth++;
-    }
-
     private String format(Date date) {
         if (date == null) {
             return "-";
@@ -107,51 +71,22 @@ public class LoggedSinglePackage extends Action {
         return formatter.format(date);
     }
 
-    private String getTextTable() {
-        StringBuilder table = new StringBuilder();
-        table.append(spacePad("Class Name", getClassNameWidth()));
-        table.append("| ");
-        table.append(spacePad("Loaded From", getLoadLocationWidth()));
-        table.append("| Loaded At\n");
-        table.append(dashes(getClassNameWidth()));
-        table.append("+-");
-        table.append(dashes(getLoadLocationWidth()));
-        table.append("+----------\n");
+    private String render(Table table) {
+        table.header("Class Name", "Loaded From", "Loaded At");
 
         for (LoggedClass log : getClasses()) {
-            table.append(spacePad(log.getClassName(), getClassNameWidth()));
-            table.append("| ");
-            table.append(spacePad(log.getLoadedFrom(), getLoadLocationWidth()));
-            table.append("| ");
-            table.append(format(log.getLoggedAt()));
-            table.append("\n");
+            table.row(log.getClassName(), log.getLoadedFrom(), format(log.getLoggedAt()));
         }
 
-        return table.toString();
-    }
-
-    private String getRowsHtml() {
-        StringBuilder rows = new StringBuilder();
-
-        for (LoggedClass log : getClasses()) {
-            rows.append("<tr><td>");
-            rows.append(log.getClassName());
-            rows.append("</td><td>");
-            rows.append(log.getLoadedFrom());
-            rows.append("</td><td>");
-            rows.append(format(log.getLoggedAt()));
-            rows.append("</td></tr>\n");
-        }
-
-        return rows.toString();
+        return table.render();
     }
 
     @Override
     public void process() throws IOException {
         if (isTextRequest()) {
-            request.printTemplate("logged_package.txt", getPackageName(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), getTextTable());
+            request.printTemplate("logged_package.txt", getPackageName(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new TextTable()));
         } else {
-            request.printTemplate("logged_package.html", getPackageName(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), getRowsHtml());
+            request.printTemplate("logged_package.html", getPackageName(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new HtmlTable()));
         }
     }
 }

@@ -58,26 +58,6 @@ public abstract class Action {
         return request.getPath().endsWith(".txt");
     }
 
-    protected String spacePad(String value, int size) {
-        StringBuilder result = new StringBuilder(value);
-
-        while (result.length() < size) {
-            result.append(' ');
-        }
-
-        return result.toString();
-    }
-
-    protected String dashes(int size) {
-        StringBuilder result = new StringBuilder();
-
-        while (result.length() < size) {
-            result.append('-');
-        }
-
-        return result.toString();
-    }
-
     protected Server getServer() {
         return request.getServer();
     }

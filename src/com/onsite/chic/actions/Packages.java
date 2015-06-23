@@ -13,7 +13,6 @@ import java.util.SortedMap;
  */
 public class Packages extends Action {
     private SortedMap<String, Integer> packageCounts;
-    private Integer packageNameWidth;
 
     @Override
     public boolean canProcess(Request request) {
@@ -28,61 +27,23 @@ public class Packages extends Action {
         return packageCounts;
     }
 
-    private int getPackageNameWidth() {
-        if (packageNameWidth == null) {
-            packageNameWidth = "Package Name".length();
-
-            for (String key : getPackageCounts().keySet()) {
-                if (key.length() > packageNameWidth) {
-                    packageNameWidth = key.length();
-                }
-            }
-
-            packageNameWidth++;
-        }
-
-        return packageNameWidth;
-    }
-
-    private String getTextTable() {
-        StringBuilder table = new StringBuilder();
-        table.append(spacePad("Package Name", getPackageNameWidth()));
-        table.append("| Number of Classes\n");
-        table.append(dashes(getPackageNameWidth()));
-        table.append("+------------------\n");
+    private String render(Table table) {
+        table.header("Package Name", "Number of Classes");
 
         for (String key : getPackageCounts().keySet()) {
-            table.append(spacePad(key, getPackageNameWidth()));
-            table.append("| ");
-            table.append(getPackageCounts().get(key));
-            table.append("\n");
+            String link = table.link(key, "/package/" + key);
+            table.row(link, "" + getPackageCounts().get(key));
         }
 
-        return table.toString();
-    }
-
-    private String getRowsHtml() {
-        StringBuilder rows = new StringBuilder();
-
-        for (String key : getPackageCounts().keySet()) {
-            rows.append("<tr><td><a href=\"/package/");
-            rows.append(key);
-            rows.append("\">");
-            rows.append(key);
-            rows.append("</a></td><td>");
-            rows.append(getPackageCounts().get(key));
-            rows.append("</td></tr>\n");
-        }
-
-        return rows.toString();
+        return table.render();
     }
 
     @Override
     public void process() throws IOException {
         if (isTextRequest()) {
-            request.printTemplate("packages.txt", getPackageCounts().size(), getTextTable());
+            request.printTemplate("packages.txt", getPackageCounts().size(), render(new TextTable()));
         } else {
-            request.printTemplate("packages.html", getPackageCounts().size(), getRowsHtml());
+            request.printTemplate("packages.html", getPackageCounts().size(), render(new HtmlTable()));
         }
     }
 }

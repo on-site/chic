@@ -39,37 +39,22 @@ public class Package extends Action {
         return classes;
     }
 
-    private String getTextTable() {
-        StringBuilder table = new StringBuilder();
-        table.append("Class Name\n");
-        table.append("----------\n");
+    private String render(Table table) {
+        table.header("Class Name");
 
         for (Class clazz : getClasses()) {
-            table.append(clazz.getName());
-            table.append("\n");
+            table.row(clazz.getName());
         }
 
-        return table.toString();
-    }
-
-    private String getRowsHtml() {
-        StringBuilder rows = new StringBuilder();
-
-        for (Class clazz : getClasses()) {
-            rows.append("<tr><td>");
-            rows.append(clazz.getName());
-            rows.append("</td></tr>\n");
-        }
-
-        return rows.toString();
+        return table.render();
     }
 
     @Override
     public void process() throws IOException {
         if (isTextRequest()) {
-            request.printTemplate("package.txt", getPackageName(), getClasses().length, getTextTable());
+            request.printTemplate("package.txt", getPackageName(), getClasses().length, render(new TextTable()));
         } else {
-            request.printTemplate("package.html", getPackageName(), getClasses().length, getRowsHtml());
+            request.printTemplate("package.html", getPackageName(), getClasses().length, render(new HtmlTable()));
         }
     }
 }
