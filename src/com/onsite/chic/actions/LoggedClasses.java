@@ -4,7 +4,6 @@ import com.onsite.chic.LoggedClass;
 import com.onsite.chic.Request;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import java.util.List;
  * @author Mike Virata-Stone
  */
 public class LoggedClasses extends Action {
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private List<LoggedClass> classes;
 
     @Override
@@ -29,10 +27,6 @@ public class LoggedClasses extends Action {
         }
 
         return classes;
-    }
-
-    private String format(Date date) {
-        return formatter.format(date);
     }
 
     private String render(Table table) {

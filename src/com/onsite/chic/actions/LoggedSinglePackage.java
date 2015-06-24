@@ -5,8 +5,6 @@ import com.onsite.chic.LoggedPackage;
 import com.onsite.chic.Request;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +14,6 @@ import java.util.List;
  * @author Mike Virata-Stone
  */
 public class LoggedSinglePackage extends Action {
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private String packageName;
     private List<LoggedClass> classes;
     private String firstLoggedAt;
@@ -63,14 +60,6 @@ public class LoggedSinglePackage extends Action {
         }
 
         return lastLoggedAt;
-    }
-
-    private String format(Date date) {
-        if (date == null) {
-            return "-";
-        }
-
-        return formatter.format(date);
     }
 
     private String render(Table table) {

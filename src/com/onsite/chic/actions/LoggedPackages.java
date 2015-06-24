@@ -4,8 +4,6 @@ import com.onsite.chic.LoggedPackage;
 import com.onsite.chic.Request;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,7 +13,6 @@ import java.util.List;
  * @author Mike Virata-Stone
  */
 public class LoggedPackages extends Action {
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private List<LoggedPackage> packages;
 
     @Override
@@ -29,14 +26,6 @@ public class LoggedPackages extends Action {
         }
 
         return packages;
-    }
-
-    private String format(Date date) {
-        if (date == null) {
-            return "-";
-        }
-
-        return formatter.format(date);
     }
 
     private String render(Table table) {

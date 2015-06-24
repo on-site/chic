@@ -6,6 +6,8 @@ import com.onsite.chic.Server;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Base class for any action in the view.
@@ -13,6 +15,7 @@ import java.lang.reflect.Constructor;
  * @author Mike Virata-Stone
  */
 public abstract class Action {
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private Constructor<? extends Action> constructor;
     protected Request request;
 
@@ -52,6 +55,14 @@ public abstract class Action {
         }
 
         return false;
+    }
+
+    protected String format(Date date) {
+        if (date == null) {
+            return "-";
+        }
+
+        return formatter.format(date);
     }
 
     protected boolean isTextRequest() {
