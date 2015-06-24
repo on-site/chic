@@ -95,6 +95,10 @@ public class Chic {
     }
 
     public void startClassLogging() {
+        if (!"true".equals(args.get("logclassloading"))) {
+            return;
+        }
+
         if (wasClassLoggingOn == null) {
             wasClassLoggingOn = getClassLoadingBean().isVerbose();
         }
@@ -104,6 +108,10 @@ public class Chic {
     }
 
     public void stopClassLogging() {
+        if (!"true".equals(args.get("logclassloading"))) {
+            return;
+        }
+
         if (wasClassLoggingOn != null) {
             getClassLoadingBean().setVerbose(wasClassLoggingOn);
         }
