@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class LoggedClasses extends Action {
     private List<LoggedClass> classes;
+    private String firstLoggedAt;
+    private String lastLoggedAt;
 
     @Override
     public boolean canProcess(Request request) {
@@ -27,6 +29,34 @@ public class LoggedClasses extends Action {
         }
 
         return classes;
+    }
+
+    private String getFirstLoggedAt() {
+        if (firstLoggedAt == null) {
+            Date loggedAt = null;
+
+            if (!getClasses().isEmpty()) {
+                loggedAt = getClasses().get(0).getLoggedAt();
+            }
+
+            firstLoggedAt = format(loggedAt);
+        }
+
+        return firstLoggedAt;
+    }
+
+    private String getLastLoggedAt() {
+        if (lastLoggedAt == null) {
+            Date loggedAt = null;
+
+            if (!getClasses().isEmpty()) {
+                loggedAt = getClasses().get(getClasses().size() - 1).getLoggedAt();
+            }
+
+            lastLoggedAt = format(loggedAt);
+        }
+
+        return lastLoggedAt;
     }
 
     private String render(Table table) {
@@ -44,9 +74,9 @@ public class LoggedClasses extends Action {
         if (isCsvRequest()) {
             request.printCsv(render(new CsvTable()));
         } else if (isTextRequest()) {
-            request.printTemplate("logged_classes.txt", getClasses().size(), render(new TextTable()));
+            request.printTemplate("logged_classes.txt", getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new TextTable()));
         } else {
-            request.printTemplate("logged_classes.html", getClasses().size(), render(new HtmlTable()));
+            request.printTemplate("logged_classes.html", getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new HtmlTable()));
         }
     }
 }

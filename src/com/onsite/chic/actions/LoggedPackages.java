@@ -1,9 +1,11 @@
 package com.onsite.chic.actions;
 
+import com.onsite.chic.LoggedClass;
 import com.onsite.chic.LoggedPackage;
 import com.onsite.chic.Request;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,6 +16,9 @@ import java.util.List;
  */
 public class LoggedPackages extends Action {
     private List<LoggedPackage> packages;
+    private List<LoggedClass> classes;
+    private String firstLoggedAt;
+    private String lastLoggedAt;
 
     @Override
     public boolean canProcess(Request request) {
@@ -26,6 +31,42 @@ public class LoggedPackages extends Action {
         }
 
         return packages;
+    }
+
+    private List<LoggedClass> getClasses() {
+        if (classes == null) {
+            classes = getChic().getLoggedClasses();
+        }
+
+        return classes;
+    }
+
+    private String getFirstLoggedAt() {
+        if (firstLoggedAt == null) {
+            Date loggedAt = null;
+
+            if (!getClasses().isEmpty()) {
+                loggedAt = getClasses().get(0).getLoggedAt();
+            }
+
+            firstLoggedAt = format(loggedAt);
+        }
+
+        return firstLoggedAt;
+    }
+
+    private String getLastLoggedAt() {
+        if (lastLoggedAt == null) {
+            Date loggedAt = null;
+
+            if (!getClasses().isEmpty()) {
+                loggedAt = getClasses().get(getClasses().size() - 1).getLoggedAt();
+            }
+
+            lastLoggedAt = format(loggedAt);
+        }
+
+        return lastLoggedAt;
     }
 
     private String render(Table table) {
@@ -44,9 +85,9 @@ public class LoggedPackages extends Action {
         if (isCsvRequest()) {
             request.printCsv(render(new CsvTable()));
         } else if (isTextRequest()) {
-            request.printTemplate("logged_packages.txt", getPackages().size(), render(new TextTable()));
+            request.printTemplate("logged_packages.txt", getPackages().size(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new TextTable()));
         } else {
-            request.printTemplate("logged_packages.html", getPackages().size(), render(new HtmlTable()));
+            request.printTemplate("logged_packages.html", getPackages().size(), getClasses().size(), getFirstLoggedAt(), getLastLoggedAt(), render(new HtmlTable()));
         }
     }
 }

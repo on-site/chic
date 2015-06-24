@@ -1,3 +1,7 @@
 Total number of classes logged: {0}
 
-{1}
+Time first class was logged at: {1}
+
+Time last class was logged at: {2}
+
+{3}
