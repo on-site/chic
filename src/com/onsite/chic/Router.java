@@ -3,6 +3,7 @@ package com.onsite.chic;
 import com.onsite.chic.actions.Action;
 import com.onsite.chic.actions.Asset;
 import com.onsite.chic.actions.Classes;
+import com.onsite.chic.actions.CombinedAsset;
 import com.onsite.chic.actions.Index;
 import com.onsite.chic.actions.LoggedClasses;
 import com.onsite.chic.actions.LoggedSinglePackage;
@@ -33,6 +34,7 @@ public class Router {
         routes.add(new Package());
         routes.add(new Shutdown());
         routes.add(new Asset());
+        routes.add(new CombinedAsset());
     }
 
     public boolean route(Request request) throws IOException {

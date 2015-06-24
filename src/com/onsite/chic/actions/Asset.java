@@ -34,14 +34,20 @@ public class Asset extends Action {
         }
     }
 
-    private static InputStream getStream(Request request) {
-        String path = request.getPath();
-
+    protected String getAssetPath(String path) {
         if (path.startsWith("/")) {
             path = path.substring(1);
         }
 
-        return request.getClass().getResourceAsStream("assets/" + path);
+        return "assets/" + path;
+    }
+
+    protected InputStream getStream(Request request) {
+        return request.getClass().getResourceAsStream(getAssetPath(request.getPath()));
+    }
+
+    protected InputStream getStream(String asset) {
+        return request.getClass().getResourceAsStream(asset);
     }
 
     private static boolean isValidAsset(Request request) {
@@ -51,8 +57,20 @@ public class Asset extends Action {
     @Override
     public void process() throws IOException {
         request.printHeader(200, Request.getMimeType(request.getPath()));
+        printAsset();
+    }
 
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(getStream(request), "UTF-8"))) {
+    protected void printAsset() throws IOException {
+        printAsset(getStream(request));
+    }
+
+    protected void printAsset(InputStream stream) throws IOException {
+        if (stream == null) {
+            System.err.println("Chic: Failed to find asset!");
+            return;
+        }
+
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(stream, "UTF-8"))) {
             String line = input.readLine();
 
             while (line != null) {

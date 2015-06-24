@@ -10,7 +10,7 @@ public class HtmlTable extends Table {
     private String rendered;
 
     public HtmlTable() {
-        table.append("<table class=\"bordered\">\n<thead>\n");
+        table.append("<table class=\"bordered sorted\">\n<thead>\n");
     }
 
     @Override
